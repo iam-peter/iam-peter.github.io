@@ -1,0 +1,24 @@
+{{ define "main" }}
+<h1>{{ .Title }}</h1>
+{{ .Content }}
+{{ if eq .Section "notes" }}
+<input class="filter" type="search" placeholder="Filter notes…" aria-label="Filter notes" data-filter=".note-list li">
+{{ end }}
+{{ partial "note-list.html" .Pages }}
+{{ with site.Taxonomies.tags }}
+{{ if eq $.Kind "section" }}
+<p class="tags">
+  {{ range .Alphabetical }}<a href="{{ .Page.RelPermalink }}">#{{ .Page.Title }}</a> {{ end }}
+</p>
+{{ end }}
+{{ end }}
+<script>
+  document.querySelectorAll("[data-filter]").forEach(input => {
+    const items = document.querySelectorAll(input.dataset.filter);
+    input.addEventListener("input", () => {
+      const q = input.value.trim().toLowerCase();
+      items.forEach(li => li.hidden = !li.textContent.toLowerCase().includes(q));
+    });
+  });
+</script>
+{{ end }}

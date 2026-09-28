@@ -1,0 +1,12 @@
+{{ define "main" }}
+<article>
+  <h1>{{ .Title }}</h1>
+  <p class="meta">
+    <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 January 2006" }}</time>
+    {{- if ne .Lastmod .Date }} · updated <time datetime="{{ .Lastmod.Format "2006-01-02" }}">{{ .Lastmod.Format "2 January 2006" }}</time>{{ end }}
+    {{- range .GetTerms "tags" }} · <a href="{{ .RelPermalink }}">#{{ .LinkTitle }}</a>{{ end }}
+  </p>
+  {{ .Content }}
+  <p><a href="{{ .Parent.RelPermalink }}">← All {{ lower .Parent.Title }}</a></p>
+</article>
+{{ end }}

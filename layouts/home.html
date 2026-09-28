@@ -1,0 +1,17 @@
+{{ define "main" }}
+<section class="intro">
+  {{ .Content }}
+</section>
+
+<section>
+  <h2>Recent projects</h2>
+  {{ partial "project-list.html" (dict "limit" 6) }}
+  <p><a href="{{ "/projects/" | relURL }}">All projects →</a></p>
+</section>
+
+<section>
+  <h2>Latest notes</h2>
+  {{ partial "note-list.html" (first 5 (where site.RegularPages "Section" "notes")) }}
+  <p><a href="{{ "/notes/" | relURL }}">All notes →</a></p>
+</section>
+{{ end }}

@@ -1,0 +1,9 @@
+<ul class="note-list">
+  {{- range . }}
+  <li>
+    <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+    {{- with .Summary }}<span class="summary">{{ . | plainify | truncate 140 }}</span>{{ end }}
+    <span class="hidden-keywords" hidden>{{ delimit (.Params.tags | default slice) " " }}</span>
+  </li>
+  {{- end }}
+</ul>

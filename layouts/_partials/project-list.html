@@ -1,0 +1,25 @@
+{{- $repos := partialCached "github-repos.html" . -}}
+{{- with .limit }}{{ $repos = first . $repos }}{{ end -}}
+{{- with $repos }}
+<ul class="cards">
+  {{- range . }}
+  <li class="card">
+    <h3><a href="{{ .html_url }}">{{ .name }}</a></h3>
+    {{- with .description }}
+    <p>{{ . }}</p>
+    {{- end }}
+    <p class="meta">
+      {{- with .language }}<span>{{ . }}</span>{{ end }}
+      {{- with .stargazers_count }}<span>★ {{ . }}</span>{{ end }}
+      {{- if .fork }}<span>fork</span>{{ end }}
+      <span>updated <time datetime="{{ .pushed_at }}">{{ time.Format "Jan 2006" .pushed_at }}</time></span>
+    </p>
+    {{- with .homepage }}
+    <p class="meta"><a href="{{ . }}">{{ . }}</a></p>
+    {{- end }}
+  </li>
+  {{- end }}
+</ul>
+{{- else }}
+<p>Projects are loaded from <a href="https://github.com/{{ site.Params.github.user }}">GitHub</a> when the site is built.</p>
+{{- end }}

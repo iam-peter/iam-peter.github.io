@@ -1,0 +1,29 @@
+{{- /*
+  Returns the public repositories of params.github.user, most recently
+  pushed first. Fetched from the GitHub API at build time; returns an empty
+  slice when the API is unreachable so offline builds still work.
+  HUGO_GITHUB_TOKEN, if set, raises the API rate limit.
+*/ -}}
+{{- $cfg := site.Params.github -}}
+{{- $url := printf "https://api.github.com/users/%s/repos?per_page=100&sort=pushed" $cfg.user -}}
+{{- $opts := dict "headers" (dict "Accept" "application/vnd.github+json") -}}
+{{- with os.Getenv "HUGO_GITHUB_TOKEN" -}}
+  {{- $opts = dict "headers" (dict "Accept" "application/vnd.github+json" "Authorization" (printf "Bearer %s" .)) -}}
+{{- end -}}
+
+{{- $repos := slice -}}
+{{- with try (resources.GetRemote $url $opts) -}}
+  {{- with .Err -}}
+    {{- warnf "Could not fetch GitHub repositories: %s" . -}}
+  {{- else with .Value -}}
+    {{- range . | transform.Unmarshal -}}
+      {{- $listed := and (not .archived) (or $cfg.showForks (not .fork)) -}}
+      {{- if in $cfg.include .name -}}{{- $listed = true -}}{{- end -}}
+      {{- if in $cfg.exclude .name -}}{{- $listed = false -}}{{- end -}}
+      {{- if $listed -}}{{- $repos = $repos | append . -}}{{- end -}}
+    {{- end -}}
+  {{- else -}}
+    {{- warnf "GitHub user %q not found" $cfg.user -}}
+  {{- end -}}
+{{- end -}}
+{{- return $repos -}}
