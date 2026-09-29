@@ -4,9 +4,15 @@
 </section>
 
 <section>
-  <h2>Recent projects</h2>
-  {{ partial "project-list.html" (dict "limit" 6) }}
+  <h2>Selected projects</h2>
+  {{ partial "project-cards.html" (where (where site.RegularPages "Section" "projects") "Params.featured" true).ByDate.Reverse }}
   <p><a href="{{ "/projects/" | relURL }}">All projects →</a></p>
+</section>
+
+<section>
+  <h2>Recently on GitHub</h2>
+  {{ partial "project-list.html" (dict "limit" 3) }}
+  <p><a href="{{ "/projects/#github" | relURL }}">All repositories →</a></p>
 </section>
 
 <section>

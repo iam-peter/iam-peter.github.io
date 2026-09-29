@@ -2,5 +2,5 @@
 title: "Projects"
 ---
 
-My public repositories on [GitHub](https://github.com/iam-peter), most
-recently updated first. The list is refreshed every time the site is built.
+Research projects and theses from my studies, websites I built, and my open
+source work on GitHub.

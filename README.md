@@ -14,10 +14,20 @@ Actions builds and deploys the site.
 
 ## Projects
 
-The projects are not stored in this repository. They are fetched from the
-GitHub API (`api.github.com/users/iam-peter/repos`) every time the site is
-built. Archived repositories and forks are hidden. Adjust `[params.github]`
-in `hugo.toml` to add forks (`include`) or hide repositories (`exclude`).
+The projects page has three groups:
+
+- **University projects and theses** and **web projects** are page bundles
+  in `content/projects/<name>/`, with `category: academic` or `category: web`
+  in the front matter. List the images in `images`; the first one is used as
+  the cover. An entry can also be a map with `src` and `caption`. `featured: true` puts a project on the home page. Other fields
+  such as `period`, `institution`, `supervisors`, `participants`, `tools`,
+  `website` and `publications` are optional.
+
+- **Open source on GitHub** is not stored in this repository. It is fetched
+  from the GitHub API (`api.github.com/users/iam-peter/repos`) every time the
+  site is built. Archived repositories and forks are hidden. Adjust
+  `[params.github]` in `hugo.toml` to add forks (`include`) or hide
+  repositories (`exclude`).
 
 The workflow also rebuilds the site every night so new repositories appear
 without a push. If the API is unreachable, the CI build fails and the

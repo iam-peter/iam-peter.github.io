@@ -1,0 +1,21 @@
+<ul class="cards">
+  {{- range $page := . }}
+  <li class="card project-card">
+    {{- range first 1 (partial "project-images.html" .) }}
+    {{- $anchor := cond (eq $page.Params.category "web") "Top" "Center" }}
+    {{- $thumb := .image.Fill (printf "640x400 webp %s" $anchor) }}
+    <a class="cover" href="{{ $page.RelPermalink }}" tabindex="-1">
+      <img src="{{ $thumb.RelPermalink }}" width="{{ $thumb.Width }}" height="{{ $thumb.Height }}" alt="" loading="lazy">
+    </a>
+    {{- end }}
+    <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+    {{- with .Params.summary }}
+    <p>{{ . }}</p>
+    {{- end }}
+    <p class="meta">
+      {{- with .Params.period }}<span>{{ . }}</span>{{ end }}
+      {{- range .Params.tools }}<span>{{ . }}</span>{{ end }}
+    </p>
+  </li>
+  {{- end }}
+</ul>

@@ -1,0 +1,41 @@
+{{ define "main" }}
+<article class="project">
+  <h1>{{ .Title }}</h1>
+  <dl class="facts">
+    {{- with .Params.period }}<dt>When</dt><dd>{{ . }}</dd>{{ end }}
+    {{- with .Params.institution }}<dt>Where</dt><dd>{{ . }}</dd>{{ end }}
+    {{- with .Params.supervisors }}<dt>Supervisors</dt><dd>{{ delimit . ", " }}</dd>{{ end }}
+    {{- with .Params.participants }}<dt>Team</dt><dd>{{ delimit . ", " }}</dd>{{ end }}
+    {{- with .Params.tools }}<dt>Tools</dt><dd>{{ delimit . ", " }}</dd>{{ end }}
+    {{- with .Params.website }}<dt>Website</dt><dd><a href="{{ . }}">{{ strings.TrimSuffix "/" (replaceRE `^https?://(www\.)?|#$` "" .) }}</a></dd>{{ end }}
+  </dl>
+
+  {{ .Content }}
+
+  {{- with .Params.publications }}
+  <h2>Publications</h2>
+  <ul>
+    {{- range . }}<li>{{ . | markdownify }}</li>{{ end }}
+  </ul>
+  {{- end }}
+
+  {{- with partial "project-images.html" . }}
+  <div class="gallery">
+    {{- range . }}
+    {{- $orig := .image }}
+    {{- $img := cond (gt $orig.Width 1400) ($orig.Resize "1400x webp") ($orig.Process "webp") }}
+    <figure{{ if gt $orig.Height $orig.Width }} class="portrait"{{ end }}>
+      <a href="{{ $orig.RelPermalink }}">
+        <img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt="{{ .caption | default $.Title }}" loading="lazy">
+      </a>
+      {{- with .caption }}
+      <figcaption>{{ . }}</figcaption>
+      {{- end }}
+    </figure>
+    {{- end }}
+  </div>
+  {{- end }}
+
+  <p><a href="{{ .Parent.RelPermalink }}">← All projects</a></p>
+</article>
+{{ end }}

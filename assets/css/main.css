@@ -118,4 +118,46 @@ table { border-collapse: collapse; margin: 1rem 0; }
 th, td { padding: .4rem .8rem; border: 1px solid var(--border); text-align: left; }
 th { background: var(--card); }
 
-li + li { margin-top: .25rem; }
+article li + li { margin-top: .25rem; }
+
+/* Project cards and pages */
+.project-card { padding: 0 0 .5rem; overflow: hidden; }
+.project-card > :not(.cover) { margin-left: 1.1rem; margin-right: 1.1rem; }
+.project-card h3 { margin-top: .9rem; }
+.cover img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 8 / 5;
+  object-fit: cover;
+  border-bottom: 1px solid var(--border);
+}
+
+.toc { display: flex; gap: 1.25rem; margin: 1rem 0; }
+
+dl, .facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: .3rem 1.25rem;
+  margin: 1rem 0 1.5rem;
+  font-size: .925rem;
+}
+.facts dt, dt { color: var(--muted); }
+.facts dd, dd { margin: 0; }
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+.gallery figure { margin: 0; }
+.gallery figure:not(.portrait) { grid-column: 1 / -1; }
+.gallery figcaption { margin-top: .4rem; color: var(--muted); font-size: .875rem; }
+.gallery img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}

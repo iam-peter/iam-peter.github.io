@@ -1,0 +1,20 @@
+{{- /*
+  Returns the project's images in front matter order as a slice of
+  dicts with "image" and "caption". Entries in params.images are either a
+  file name or a map with "src" and "caption".
+*/ -}}
+{{- $images := slice -}}
+{{- range .Params.images -}}
+  {{- $src := . -}}
+  {{- $caption := "" -}}
+  {{- if reflect.IsMap . -}}
+    {{- $src = .src -}}
+    {{- $caption = .caption | default "" -}}
+  {{- end -}}
+  {{- with $.Resources.Get $src -}}
+    {{- $images = $images | append (dict "image" . "caption" $caption) -}}
+  {{- else -}}
+    {{- errorf "%s: image %q not found" $.File.Path $src -}}
+  {{- end -}}
+{{- end -}}
+{{- return $images -}}
