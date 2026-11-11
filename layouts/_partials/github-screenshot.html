@@ -1,0 +1,38 @@
+{{- /*
+  Returns the first raster image in a repository's README as an image
+  resource, or nothing. The context is a repository from github-repos.html.
+
+  Markdown images and <img> tags are both found, in the order they appear.
+  SVG files are skipped, which drops logos and badges. Relative paths are
+  resolved against the default branch on raw.githubusercontent.com. A
+  missing README or image is not an error, so the card just has no cover.
+*/ -}}
+{{- $repo := . -}}
+{{- $headers := dict "Accept" "application/vnd.github+json" -}}
+{{- with os.Getenv "HUGO_GITHUB_TOKEN" -}}
+  {{- $headers = merge $headers (dict "Authorization" (printf "Bearer %s" .)) -}}
+{{- end -}}
+
+{{- $image := false -}}
+{{- $url := printf "https://api.github.com/repos/%s/readme" $repo.full_name -}}
+{{- with try (resources.GetRemote $url (dict "headers" $headers)) -}}
+  {{- with .Value -}}
+    {{- $readme := replace (transform.Unmarshal .).content "\n" "" | base64Decode -}}
+    {{- $raw := printf "https://raw.githubusercontent.com/%s/%s/" $repo.full_name $repo.default_branch -}}
+    {{- range findRE `!\[[^\]]*\]\([^)\s]+|<img[^>]*\ssrc="[^"]+"` $readme -}}
+      {{- if $image }}{{ break }}{{ end -}}
+      {{- $src := replaceRE `^!\[[^\]]*\]\(|^<img[^>]*\ssrc="|"$` "" . -}}
+      {{- $src = replaceRE `[?#].*$` "" $src -}}
+      {{- if not (findRE `(?i)\.(png|jpe?g|gif|webp)$` $src) }}{{ continue }}{{ end -}}
+      {{- if not (findRE `^https?://` $src) -}}
+        {{- $src = printf "%s%s" $raw (strings.TrimPrefix "/" (strings.TrimPrefix "./" $src)) -}}
+      {{- end -}}
+      {{- with try (resources.GetRemote $src) -}}
+        {{- with .Value -}}
+          {{- if eq .ResourceType "image" }}{{ $image = . }}{{ end -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $image -}}

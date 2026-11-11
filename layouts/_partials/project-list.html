@@ -2,8 +2,15 @@
 {{- with .limit }}{{ $repos = first . $repos }}{{ end -}}
 {{- with $repos }}
 <ul class="cards">
-  {{- range . }}
-  <li class="card">
+  {{- range $repo := . }}
+  {{- $screenshot := partialCached "github-screenshot.html" . .full_name .pushed_at }}
+  <li class="card{{ if $screenshot }} project-card{{ end }}">
+    {{- with $screenshot }}
+    {{- $thumb := .Fill "640x400 webp Top" }}
+    <a class="cover" href="{{ $repo.html_url }}" tabindex="-1">
+      <img src="{{ $thumb.RelPermalink }}" width="{{ $thumb.Width }}" height="{{ $thumb.Height }}" alt="" loading="lazy">
+    </a>
+    {{- end }}
     <h3><a href="{{ .html_url }}">{{ .name }}</a></h3>
     {{- with .description }}
     <p>{{ . }}</p>

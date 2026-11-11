@@ -29,6 +29,12 @@ The projects page has three groups:
   `[params.github]` in `hugo.toml` to add forks (`include`) or hide
   repositories (`exclude`).
 
+  A repository's card gets a cover image when its README has a
+  screenshot: the first PNG, JPEG, GIF or WebP, in Markdown or an `<img>`
+  tag. SVG files are skipped, so logos and badges never become a cover.
+  To change a repository's cover, put the image you want first in its
+  README.
+
 The workflow also rebuilds the site every night so new repositories appear
 without a push. If the API is unreachable, the CI build fails and the
 previous deployment stays online.
@@ -41,7 +47,8 @@ hugo server
 
 Then open <http://localhost:1313>. Without network access the projects list
 is empty, but the build still works. Set `HUGO_GITHUB_TOKEN` to a GitHub
-token if you hit the API rate limit of 60 requests per hour.
+token if you hit the API rate limit of 60 requests per hour. Each build makes
+one request for the repository list and one per repository README.
 
 ## Deployment
 
