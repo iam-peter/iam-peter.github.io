@@ -5,13 +5,17 @@
 
 <section>
   <h2>Selected projects</h2>
-  {{ partial "project-cards.html" (where (where site.RegularPages "Section" "projects") "Params.featured" true).ByDate.Reverse }}
+  {{- /* Featured projects first, then the newest others, to fill two rows */}}
+  {{- $projects := where site.RegularPages "Section" "projects" }}
+  {{- $featured := (where $projects "Params.featured" true).ByDate.Reverse }}
+  {{- $others := (where $projects "Params.featured" "!=" true).ByDate.Reverse }}
+  {{ partial "project-cards.html" (first 8 (union $featured $others)) }}
   <p><a href="{{ "/projects/" | relURL }}">All projects →</a></p>
 </section>
 
 <section>
   <h2>Recently on GitHub</h2>
-  {{ partial "project-list.html" (dict "limit" 3) }}
+  {{ partial "project-list.html" (dict "limit" 4) }}
   <p><a href="{{ "/projects/#github" | relURL }}">All repositories →</a></p>
 </section>
 
