@@ -1,23 +1,37 @@
+/* Light and dark palettes. The theme is set on <html data-theme> by the
+   script in baseof.html; without JavaScript the system setting applies. */
 :root {
-  color-scheme: light dark;
-  --bg: #fdfdfc;
-  --fg: #1f2328;
-  --muted: #656d76;
-  --accent: #0969da;
-  --border: #d8dee4;
-  --card: #f6f8fa;
-  --code: #f6f8fa;
+  color-scheme: light;
+  --bg: #ffffff;
+  --fg: #1a1a1a;
+  --muted: #666666;
+  --accent: #0a66d8;
+  --border: #e0e0e0;
+  --card: #f5f5f5;
+  --code: #f5f5f5;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #111111;
+  --fg: #e8e8e8;
+  --muted: #9a9a9a;
+  --accent: #5aa2ff;
+  --border: #2e2e2e;
+  --card: #1b1b1b;
+  --code: #1b1b1b;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0d1117;
-    --fg: #e6edf3;
-    --muted: #8d96a0;
-    --accent: #4493f8;
-    --border: #30363d;
-    --card: #161b22;
-    --code: #161b22;
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --bg: #111111;
+    --fg: #e8e8e8;
+    --muted: #9a9a9a;
+    --accent: #5aa2ff;
+    --border: #2e2e2e;
+    --card: #1b1b1b;
+    --code: #1b1b1b;
   }
 }
 
@@ -48,7 +62,25 @@ h2 { margin-top: 2.5rem; }
   border-bottom: 1px solid var(--border);
 }
 .site-title { font-weight: 700; font-size: 1.15rem; color: var(--fg); }
-.site-header nav { display: flex; gap: 1.25rem; }
+.site-header nav { display: flex; gap: 1.25rem; align-items: center; }
+
+.theme-toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  cursor: pointer;
+}
+.theme-toggle:hover { color: var(--fg); }
+.theme-toggle svg { width: 1rem; height: 1rem; }
+/* Show the icon of the theme the button switches to */
+:root[data-theme="dark"] .icon-moon,
+:root:not([data-theme="dark"]) .icon-sun { display: none; }
 .site-header nav a { color: var(--muted); }
 .site-header nav a[aria-current] { color: var(--fg); font-weight: 600; }
 
@@ -113,6 +145,8 @@ pre {
   border-radius: 6px;
 }
 pre code { padding: 0; background: none; }
+/* Use the page palette instead of the syntax theme's own background */
+pre.chroma, .chroma { background-color: var(--code) !important; }
 
 table { border-collapse: collapse; margin: 1rem 0; }
 th, td { padding: .4rem .8rem; border: 1px solid var(--border); text-align: left; }
