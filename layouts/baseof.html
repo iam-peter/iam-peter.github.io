@@ -38,7 +38,8 @@
     {{ block "main" . }}{{ end }}
   </main>
   <footer class="site-footer">
-    © {{ now.Year }} {{ site.Params.author }}
+    © {{ now.Year }} {{ site.Params.author }} ·
+    <a href="https://github.com/{{ site.Params.github.user }}/{{ site.Params.github.user }}.github.io">Source on GitHub</a>
   </footer>
   <script>
     document.querySelector(".theme-toggle").addEventListener("click", () => {

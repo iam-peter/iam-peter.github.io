@@ -20,6 +20,8 @@
       {{- $listed := and (not .archived) (or $cfg.showForks (not .fork)) -}}
       {{- if in $cfg.include .name -}}{{- $listed = true -}}{{- end -}}
       {{- if in $cfg.exclude .name -}}{{- $listed = false -}}{{- end -}}
+      {{- /* The repository of this site is linked from the footer instead */ -}}
+      {{- if eq .name (printf "%s.github.io" $cfg.user) -}}{{- $listed = false -}}{{- end -}}
       {{- if $listed -}}{{- $repos = $repos | append . -}}{{- end -}}
     {{- end -}}
   {{- else -}}
