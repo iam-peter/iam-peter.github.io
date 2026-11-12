@@ -1,0 +1,20 @@
+{{- /*
+  A responsive <img> for an image resource, as WebP in two sizes so
+  high-resolution screens get a sharp version. The 1280px one is only
+  made when the original is larger than 640px.
+
+  Context: dict with
+    image  the image resource
+    alt    alt text ("" for decorative images)
+    sizes  the sizes attribute (default: a column of the mosaic)
+    lazy   true to load the image lazily
+*/ -}}
+{{- $small := .image.Process "fit 640x1280 webp" -}}
+{{- $srcset := printf "%s %dw" $small.RelPermalink $small.Width -}}
+{{- if gt .image.Width 640 -}}
+  {{- $large := .image.Process "fit 1280x2560 webp" -}}
+  {{- $srcset = printf "%s, %s %dw" $srcset $large.RelPermalink $large.Width -}}
+{{- end -}}
+{{- $sizes := .sizes | default "(max-width: 34rem) 100vw, (max-width: 56rem) 50vw, 20rem" -}}
+<img src="{{ $small.RelPermalink }}" srcset="{{ $srcset }}" sizes="{{ $sizes }}" width="{{ $small.Width }}" height="{{ $small.Height }}" alt="{{ .alt }}"{{ if .lazy }} loading="lazy"{{ end }}>
+{{- /**/ -}}

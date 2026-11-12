@@ -1,35 +1,28 @@
 {{ define "main" }}
-<section class="intro">
+<section class="hero">
+  <h1>{{ .Title }}</h1>
+  {{- with .Params.role }}
+  <p class="hero-role">{{ . }}</p>
+  {{- end }}
   {{ .Content }}
 </section>
 
 {{- /*
-  One image per project, newest first: the cover of each project page and
-  the README screenshot of each GitHub repository. Each tile links to the
+  The image of every project, newest first. Each tile links to the
   project page, or to a repository's homepage when it has one.
 */}}
-{{- $items := slice }}
-{{- range $page := where site.RegularPages "Section" "projects" }}
-  {{- range first 1 (partial "project-images.html" .) }}
-    {{- $items = $items | append (dict "image" .image "title" $page.Title "url" $page.RelPermalink "date" $page.Date) }}
-  {{- end }}
-{{- end }}
-{{- range $repo := partialCached "github-repos.html" . }}
-  {{- with partialCached "github-screenshot.html" . .full_name .pushed_at }}
-    {{- $url := $repo.homepage | default $repo.html_url }}
-    {{- $items = $items | append (dict "image" . "title" $repo.name "url" $url "date" (time $repo.pushed_at)) }}
-  {{- end }}
-{{- end }}
-
 <div class="mosaic">
   <div class="mosaic-sizer"></div>
   <div class="mosaic-gutter"></div>
-  {{- range $i, $item := sort $items "date" "desc" }}
-  {{- $img := .image.Process "fit 640x1280 webp" }}
-  <a class="tile" href="{{ .url }}">
-    <img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt="{{ .title }}"{{ if ge $i 6 }} loading="lazy"{{ end }}>
-    <span class="tile-title" aria-hidden="true">{{ .title }}</span>
+  {{- $n := 0 }}
+  {{- range $item := partialCached "project-items.html" "items" }}
+  {{- with .image }}
+  <a class="tile" href="{{ $item.url }}">
+    {{- partial "img.html" (dict "image" . "alt" $item.title "lazy" (ge $n 6)) }}
+    <span class="tile-title" aria-hidden="true">{{ $item.title }}</span>
   </a>
+  {{- $n = add $n 1 }}
+  {{- end }}
   {{- end }}
 </div>
 

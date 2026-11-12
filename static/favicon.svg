@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    rect { fill: #1a1a1a; } path { fill: #fff; }
+    @media (prefers-color-scheme: dark) { rect { fill: #e8e8e8; } path { fill: #111; } }
+  </style>
+  <rect width="32" height="32"/>
+  <!-- "HG" drawn as blocks, so it does not depend on an installed font -->
+  <path d="M5 8h3v6h4V8h3v16h-3v-7H8v7H5zM17 8h10v3h-7v10h4v-4h-2v-3h5v10H17z"/>
+</svg>

@@ -1,0 +1,41 @@
+{{- /*
+  Returns every project, newest first, as dicts the home page and the
+  projects page render from:
+
+    title, url, summary   url is the project page, or a repository's
+                          homepage (its GitHub page if it has none)
+    image                 cover image resource, or false
+    meta                  short facts: period and tools, or language,
+                          stars and last update
+    date, category        "academic", "web" or "github"
+    source                a repository's GitHub page, when url is its
+                          homepage
+*/ -}}
+{{- $items := slice -}}
+
+{{- range $page := where site.RegularPages "Section" "projects" -}}
+  {{- $image := false -}}
+  {{- range first 1 (partial "project-images.html" .) }}{{ $image = .image }}{{ end -}}
+  {{- $meta := slice -}}
+  {{- with .Params.period }}{{ $meta = $meta | append . }}{{ end -}}
+  {{- range .Params.tools }}{{ $meta = $meta | append . }}{{ end -}}
+  {{- $items = $items | append (dict
+    "title" .Title "url" .RelPermalink "summary" (.Params.summary | default "")
+    "image" $image "meta" $meta "date" .Date "category" .Params.category
+    "source" "") -}}
+{{- end -}}
+
+{{- range $repo := partialCached "github-repos.html" "repos" -}}
+  {{- $image := partialCached "github-screenshot.html" . .full_name .pushed_at -}}
+  {{- $meta := slice -}}
+  {{- with .language }}{{ $meta = $meta | append . }}{{ end -}}
+  {{- with .stargazers_count }}{{ $meta = $meta | append (printf "★ %d" (int .)) }}{{ end -}}
+  {{- if .fork }}{{ $meta = $meta | append "fork" }}{{ end -}}
+  {{- $meta = $meta | append (printf "updated %s" (time.Format "Jan 2006" .pushed_at)) -}}
+  {{- $items = $items | append (dict
+    "title" .name "url" (.homepage | default .html_url) "summary" (.description | default "")
+    "image" $image "meta" $meta "date" (time .pushed_at) "category" "github"
+    "source" (cond (ne (.homepage | default "") "") .html_url "")) -}}
+{{- end -}}
+
+{{- return sort $items "date" "desc" -}}

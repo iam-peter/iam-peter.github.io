@@ -6,6 +6,9 @@
   <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
   <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ site.Params.description }}{{ end }}">
   <meta name="author" content="{{ site.Params.author }}">
+  {{- partial "opengraph.html" . }}
+  <link rel="icon" href="{{ "favicon.svg" | relURL }}" type="image/svg+xml">
+  <link rel="preload" href="{{ "fonts/space-grotesk.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
   <script>
     // Set the theme before the first paint to avoid a flash of the wrong one
     document.documentElement.dataset.theme = localStorage.getItem("theme")
@@ -38,8 +41,16 @@
     {{ block "main" . }}{{ end }}
   </main>
   <footer class="site-footer">
-    © {{ now.Year }} {{ site.Params.author }} ·
-    <a href="https://github.com/{{ site.Params.github.user }}/{{ site.Params.github.user }}.github.io">Source on GitHub</a>
+    © {{ now.Year }} {{ site.Params.author }}
+    <nav aria-label="Contact">
+      {{- with site.Params.contact }}
+      {{- with .email }}<a href="mailto:{{ . }}">Email</a>{{ end }}
+      {{- with .linkedin }}<a href="{{ . }}">LinkedIn</a>{{ end }}
+      {{- with .mastodon }}<a href="{{ . }}" rel="me">Mastodon</a>{{ end }}
+      {{- end }}
+      <a href="https://github.com/{{ site.Params.github.user }}">GitHub</a>
+      <a href="https://github.com/{{ site.Params.github.user }}/{{ site.Params.github.user }}.github.io">Site source</a>
+    </nav>
   </footer>
   <script>
     document.querySelector(".theme-toggle").addEventListener("click", () => {

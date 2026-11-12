@@ -1,0 +1,12 @@
+{{- /*
+  A project image that opens full size in the viewer (lightbox.js), or as
+  a plain image page without JavaScript.
+
+  Context: dict with image, alt, caption, sizes and lazy (see img.html)
+*/ -}}
+{{- $orig := .image -}}
+{{- $full := cond (gt $orig.Width 2000) ($orig.Resize "2000x webp") ($orig.Process "webp") -}}
+<a href="{{ $full.RelPermalink }}" data-lightbox{{ with .caption }} data-caption="{{ . }}"{{ end }}>
+  {{- partial "img.html" (dict "image" $orig "alt" .alt "sizes" .sizes "lazy" .lazy) -}}
+</a>
+{{- /**/ -}}

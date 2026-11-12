@@ -2,23 +2,35 @@
 <h1>{{ .Title }}</h1>
 {{ .Content }}
 
-<nav class="toc">
-  <a href="#university">University</a>
-  <a href="#web">Web</a>
-  <a href="#github">GitHub</a>
-</nav>
+{{- /*
+  All projects in one wall, newest first. The buttons filter it by kind;
+  they are shown by mosaic.js, so without JavaScript the wall is just
+  complete. #university, #web and #github preselect a filter.
+*/}}
+{{- $filters := slice
+  (dict "key" "all" "hash" "" "label" "All" "note" "")
+  (dict "key" "academic" "hash" "university" "label" "University" "note" "From my studies of media informatics and computer science at the Bauhaus-Universität Weimar, 2005–2012.")
+  (dict "key" "web" "hash" "web" "label" "Web" "note" "Websites I designed and built for artists, events and campaigns.")
+  (dict "key" "github" "hash" "github" "label" "Open source" "note" (printf `My public repositories on <a href="https://github.com/%s">GitHub</a>, most recently updated first.` site.Params.github.user))
+}}
+<div class="filters" role="group" aria-label="Show projects" hidden>
+  {{- range $filters }}
+  <button type="button" data-filter="{{ .key }}" data-hash="{{ .hash }}" aria-pressed="{{ cond (eq .key "all") "true" "false" }}">{{ .label }}</button>
+  {{- end }}
+</div>
+{{- range $f := $filters }}
+{{- with .note }}
+<p class="filter-note" data-note="{{ $f.key }}" hidden>{{ . | safeHTML }}</p>
+{{- end }}
+{{- end }}
 
-<h2 id="university">University projects and theses</h2>
-<p>From my studies of media informatics and computer science at the Bauhaus-Universität Weimar, 2005–2012.</p>
-{{ partial "project-cards.html" (where .Pages "Params.category" "academic").ByDate.Reverse }}
-
-<h2 id="web">Web projects</h2>
-<p>Websites I designed and built for artists, events and campaigns.</p>
-{{ partial "project-cards.html" (where .Pages "Params.category" "web").ByDate.Reverse }}
-
-<h2 id="github">Open source on GitHub</h2>
-<p>My public repositories on <a href="https://github.com/{{ site.Params.github.user }}">GitHub</a>, most recently updated first.</p>
-{{ partial "project-list.html" (dict "limit" 0) }}
+<div class="mosaic cards">
+  <div class="mosaic-sizer"></div>
+  <div class="mosaic-gutter"></div>
+  {{- range partialCached "project-items.html" "items" }}
+  {{ partial "project-card.html" . }}
+  {{- end }}
+</div>
 
 {{ partial "mosaic-script.html" . }}
 {{ end }}

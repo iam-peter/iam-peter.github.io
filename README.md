@@ -14,14 +14,18 @@ Actions builds and deploys the site.
 
 ## Projects
 
-The projects page has three groups:
+The projects page shows every project in one Masonry wall, newest first,
+with buttons to filter it by kind. `/projects/#university`, `#web` and
+`#github` open it with a filter selected. There are three kinds:
 
 - **University projects and theses** and **web projects** are page bundles
   in `content/projects/<name>/`, with `category: academic` or `category: web`
-  in the front matter. List the images in `images`; the first one is used as
-  the cover. An entry can also be a map with `src` and `caption`. Other
-  fields such as `period`, `institution`, `supervisors`, `participants`, `tools`,
-  `website` and `publications` are optional.
+  in the front matter. List the images in `images`; the first one is the
+  cover and the large picture at the top of the project page, the rest form
+  its gallery. An entry can also be a map with `src` and `caption`. Images
+  open full size in a viewer. `summary` is the line under the title. Other
+  fields such as `period`, `institution`, `supervisors`, `participants`,
+  `tools`, `website` and `publications` are optional.
 
 - **Open source on GitHub** is not stored in this repository. It is fetched
   from the GitHub API (`api.github.com/users/iam-peter/repos`) every time the
@@ -41,13 +45,23 @@ previous deployment stays online.
 
 ## Home page
 
-The home page is a wall of images laid out with
-[Masonry](https://masonry.desandro.com/), newest first: the cover of every
-project page and the README screenshot of every GitHub repository that has
-one. Each image links to the project page, or to the repository's homepage
-(its GitHub page if it has none). The title only shows on hover.
-Masonry 4.2.2 is vendored in `assets/js/vendor/`; without JavaScript the
-images flow in plain rows.
+The home page shows your name, the `role` line from `content/_index.md` and
+a wall of images: the cover of every project, newest first. Each image
+links to the project page, or to a repository's homepage (its GitHub page
+if it has none). The title shows on hover, and under the image on touch
+screens.
+
+## Design notes
+
+- Both walls use [Masonry](https://masonry.desandro.com/) 4.2.2, vendored in
+  `assets/js/vendor/`. Without JavaScript the images flow in plain rows.
+- Images are served as WebP in two sizes, so high-resolution screens get a
+  sharp one. In dark mode they are dimmed slightly until hovered.
+- Headings use Space Grotesk (SIL Open Font License, in `static/fonts/`),
+  hosted here rather than on a font service.
+- Every page has Open Graph tags, so shared links show the project image.
+- Footer contact links come from `[params.contact]` in `hugo.toml`; an empty
+  value hides that link.
 
 ## Local preview
 

@@ -1,0 +1,28 @@
+{{- /*
+  Open Graph and Twitter card tags, so links shared in chats and social
+  networks show a title, summary and picture. The picture is the page's
+  first project image; other pages use the newest project's image.
+*/ -}}
+{{- $description := .Description | default .Params.summary | default site.Params.description -}}
+{{- $image := false -}}
+{{- if eq .Section "projects" -}}
+  {{- range first 1 (partial "project-images.html" .) }}{{ $image = .image }}{{ end -}}
+{{- end -}}
+{{- if not $image -}}
+  {{- range (where site.RegularPages "Section" "projects").ByDate.Reverse -}}
+    {{- if $image }}{{ break }}{{ end -}}
+    {{- range first 1 (partial "project-images.html" .) }}{{ $image = .image }}{{ end -}}
+  {{- end -}}
+{{- end }}
+<meta property="og:type" content="{{ cond .IsPage "article" "website" }}">
+<meta property="og:site_name" content="{{ site.Title }}">
+<meta property="og:title" content="{{ .Title }}">
+<meta property="og:description" content="{{ $description }}">
+<meta property="og:url" content="{{ .Permalink }}">
+{{- with $image }}
+{{- $og := .Fill "1200x630 jpg Top q85" }}
+<meta property="og:image" content="{{ $og.Permalink }}">
+<meta property="og:image:width" content="{{ $og.Width }}">
+<meta property="og:image:height" content="{{ $og.Height }}">
+<meta name="twitter:card" content="summary_large_image">
+{{- end }}

@@ -1,6 +1,17 @@
 {{ define "main" }}
+{{- $images := partial "project-images.html" . }}
 <article class="project">
   <h1>{{ .Title }}</h1>
+  {{- with .Params.summary }}
+  <p class="hero-role">{{ . }}</p>
+  {{- end }}
+
+  {{- range first 1 $images }}
+  <figure class="project-hero">
+    {{- partial "project-figure.html" (dict "image" .image "caption" .caption "alt" (.caption | default $.Title) "sizes" "(max-width: 64rem) 100vw, 62rem") }}
+  </figure>
+  {{- end }}
+
   <dl class="facts">
     {{- with .Params.period }}<dt>When</dt><dd>{{ . }}</dd>{{ end }}
     {{- with .Params.institution }}<dt>Where</dt><dd>{{ . }}</dd>{{ end }}
@@ -19,15 +30,11 @@
   </ul>
   {{- end }}
 
-  {{- with partial "project-images.html" . }}
+  {{- with after 1 $images }}
   <div class="gallery">
     {{- range . }}
-    {{- $orig := .image }}
-    {{- $img := cond (gt $orig.Width 1400) ($orig.Resize "1400x webp") ($orig.Process "webp") }}
-    <figure{{ if gt $orig.Height $orig.Width }} class="portrait"{{ end }}>
-      <a href="{{ $orig.RelPermalink }}">
-        <img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt="{{ .caption | default $.Title }}" loading="lazy">
-      </a>
+    <figure{{ if gt .image.Height .image.Width }} class="portrait"{{ end }}>
+      {{- partial "project-figure.html" (dict "image" .image "caption" .caption "alt" (.caption | default $.Title) "sizes" "(max-width: 64rem) 100vw, 62rem" "lazy" true) }}
       {{- with .caption }}
       <figcaption>{{ . }}</figcaption>
       {{- end }}
@@ -36,6 +43,25 @@
   </div>
   {{- end }}
 
-  <p><a href="{{ .Parent.RelPermalink }}">← All projects</a></p>
+  {{- /* Neighbours in the projects list, which is sorted newest first */}}
+  {{- $list := (where site.RegularPages "Section" "projects").ByDate.Reverse }}
+  {{- $i := 0 }}
+  {{- range $n, $p := $list }}{{ if eq $p $ }}{{ $i = $n }}{{ end }}{{ end }}
+  <nav class="pager" aria-label="More projects">
+    {{- if gt $i 0 }}
+    {{- with index $list (sub $i 1) }}
+    <a class="prev" href="{{ .RelPermalink }}"><small>← Newer</small>{{ .Title }}</a>
+    {{- end }}
+    {{- end }}
+    {{- if lt $i (sub (len $list) 1) }}
+    {{- with index $list (add $i 1) }}
+    <a class="next" href="{{ .RelPermalink }}"><small>Older →</small>{{ .Title }}</a>
+    {{- end }}
+    {{- end }}
+  </nav>
 </article>
+
+{{- with resources.Get "js/lightbox.js" | minify | fingerprint }}
+<script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" defer></script>
+{{- end }}
 {{ end }}

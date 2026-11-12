@@ -35,6 +35,16 @@
   }
 }
 
+/* Space Grotesk (SIL OFL 1.1, static/fonts) for headings, self-hosted so
+   no visitor data goes to a font service */
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("/fonts/space-grotesk.woff2") format("woff2");
+}
+
 * { box-sizing: border-box; }
 
 body {
@@ -49,7 +59,11 @@ body {
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
-h1, h2, h3 { line-height: 1.25; }
+h1, h2, h3, .site-title {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  line-height: 1.2;
+  letter-spacing: -.01em;
+}
 h2 { margin-top: 2.5rem; }
 
 .site-header {
@@ -92,14 +106,40 @@ main { padding: 1rem 0 3rem; }
   font-size: .875rem;
 }
 
+.site-footer nav { display: inline-flex; flex-wrap: wrap; gap: .25rem 1rem; margin-left: 1rem; }
+.site-footer a { color: var(--muted); }
+.site-footer a:hover { color: var(--fg); }
+
 .meta { color: var(--muted); font-size: .875rem; }
 
-/* Project cards, laid out by Masonry like the home page (see .mosaic) */
-.card h3 { margin: 0 0 .4rem; font-size: 1.05rem; word-break: break-word; }
-.card p { margin: .4rem 0; }
-.card .meta { display: flex; flex-wrap: wrap; gap: .25rem .9rem; }
-.card-body { padding: .9rem 1.1rem 1rem; }
-.cover img { display: block; width: 100%; height: auto; border-bottom: 1px solid var(--border); }
+/* Home page header */
+.hero { margin: 2.5rem 0 3rem; }
+.hero h1 { margin: 0; font-size: clamp(2.4rem, 7vw, 4rem); font-weight: 600; }
+.hero-role { max-width: 38rem; margin: .75rem 0 0; color: var(--muted); font-size: 1.15rem; }
+
+/* Project cards: plain text under the image, separated by a hairline */
+.card { padding-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
+.card h3 { margin: .9rem 0 .35rem; font-size: 1.1rem; word-break: break-word; }
+.card > a.cover + h3 { margin-top: .8rem; }
+.card > h3:first-child { margin-top: 0; }
+.card p { margin: .35rem 0; }
+.card .meta { display: flex; flex-wrap: wrap; gap: .2rem .9rem; margin-top: .6rem; }
+.cover img { display: block; width: 100%; height: auto; }
+
+/* Filter buttons on the projects page */
+.filters { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; margin: 1.5rem 0 .5rem; }
+.filters button {
+  padding: .2rem 0;
+  font: inherit;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+.filters button:hover { color: var(--fg); }
+.filters button[aria-pressed="true"] { color: var(--fg); border-bottom-color: var(--fg); }
+.filter-note { color: var(--muted); }
 
 /* Notes */
 .note-list { padding: 0; list-style: none; }
@@ -139,20 +179,17 @@ th { background: var(--card); }
 
 article li + li { margin-top: .25rem; }
 
-/* Home page image mosaic, laid out by Masonry (assets/js/mosaic.js).
-   The sizer and gutter elements give Masonry its column and gap widths. */
-.mosaic { margin: 2rem 0; }
-.mosaic-sizer, .tile { width: calc((100% - 2rem) / 3); }
-.mosaic-gutter { width: 1rem; }
-.tile {
-  display: block;
-  position: relative;
-  margin-bottom: 1rem;
-  overflow: hidden;
-  background: var(--card);
-  border: 1px solid var(--border);
-}
+/* Image walls laid out by Masonry (assets/js/mosaic.js): the home page
+   and the projects page. The sizer and gutter elements give Masonry its
+   column and gap widths; --gap is the space between tiles. */
+.mosaic { --gap: 1rem; margin: 2rem 0; }
+.mosaic.cards { --gap: 2rem; }
+.mosaic-sizer, .tile { width: calc((100% - 2 * var(--gap)) / 3); }
+.mosaic-gutter { width: var(--gap); }
+.tile { display: block; position: relative; margin-bottom: var(--gap); }
+.tile[hidden] { display: none; }
 .tile img { display: block; width: 100%; height: auto; }
+a.tile { overflow: hidden; }
 .tile-title {
   position: absolute;
   inset: auto 0 0 0;
@@ -165,15 +202,35 @@ article li + li { margin-top: .25rem; }
   transition: opacity .15s;
 }
 .tile:hover .tile-title, .tile:focus-visible .tile-title { opacity: 1; }
-@media (max-width: 56rem) { .mosaic-sizer, .tile { width: calc((100% - 1rem) / 2); } }
+/* Touch screens have no hover, so the title sits under the image */
+@media (hover: none) {
+  .tile-title {
+    position: static;
+    padding: .4rem 0 0;
+    color: var(--fg);
+    font-size: .9rem;
+    background: none;
+    opacity: 1;
+  }
+}
+@media (max-width: 56rem) { .mosaic-sizer, .tile { width: calc((100% - var(--gap)) / 2); } }
 @media (max-width: 34rem) { .mosaic-sizer, .tile { width: 100%; } }
 /* Without JavaScript the tiles flow in rows */
-.mosaic:not(.is-masonry) { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 1rem; }
+.mosaic:not(.is-masonry) { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--gap); }
 .mosaic:not(.is-masonry) :is(.mosaic-sizer, .mosaic-gutter) { display: none; }
 .mosaic:not(.is-masonry) .tile { margin-bottom: 0; }
 
+/* Mostly white screenshots glare on the dark page, so dim them a little */
+:root[data-theme="dark"] :is(.tile, .cover, .project-hero, .gallery) img { filter: brightness(.88); transition: filter .15s; }
+:root[data-theme="dark"] :is(.tile, .cover, .project-hero, .gallery) a:hover img,
+:root[data-theme="dark"] a.tile:hover img { filter: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) :is(.tile, .cover, .project-hero, .gallery) img { filter: brightness(.88); }
+}
+
 /* Project pages */
-.toc { display: flex; gap: 1.25rem; margin: 1rem 0; }
+.project-hero { margin: 1.5rem 0; }
+.project-hero img { display: block; width: 100%; height: auto; }
 
 dl, .facts {
   display: grid;
@@ -194,9 +251,57 @@ dl, .facts {
 .gallery figure { margin: 0; }
 .gallery figure:not(.portrait) { grid-column: 1 / -1; }
 .gallery figcaption { margin-top: .4rem; color: var(--muted); font-size: .875rem; }
-.gallery img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border: 1px solid var(--border);
+.gallery img { display: block; width: 100%; height: auto; }
+[data-lightbox] { cursor: zoom-in; }
+
+/* Previous and next project */
+.pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  margin: 3rem 0 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
 }
+.pager a { display: flex; flex-direction: column; max-width: 48%; }
+.pager .next { margin-left: auto; text-align: right; }
+.pager small { color: var(--muted); }
+
+/* Full-size image viewer on project pages (assets/js/lightbox.js) */
+.lightbox {
+  width: 100vw;
+  max-width: none;
+  height: 100vh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  color: #eee;
+  background: rgba(0, 0, 0, .92);
+  border: 0;
+}
+.lightbox::backdrop { background: transparent; }
+.lightbox figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  margin: 0;
+  padding: 3rem 4rem;
+}
+.lightbox img { max-width: 100%; max-height: calc(100% - 2.5rem); object-fit: contain; }
+.lightbox figcaption { min-height: 1.5rem; margin-top: .75rem; color: #bbb; font-size: .9rem; }
+.lightbox button {
+  position: absolute;
+  padding: .5rem .9rem;
+  font: 2rem/1 system-ui, sans-serif;
+  color: #ddd;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.lightbox button:hover { color: #fff; }
+.lightbox .close { top: .5rem; right: .5rem; }
+.lightbox .prev { top: 50%; left: .25rem; transform: translateY(-50%); }
+.lightbox .next { top: 50%; right: .25rem; transform: translateY(-50%); }
+@media (max-width: 34rem) { .lightbox figure { padding: 3rem .5rem; } }

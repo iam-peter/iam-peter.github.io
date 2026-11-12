@@ -1,0 +1,16 @@
+{{- /* One project as a card in a mosaic. Context: an item from project-items.html */ -}}
+<article class="tile card" data-category="{{ .category }}">
+  {{- with .image }}
+  <a class="cover" href="{{ $.url }}" tabindex="-1">
+    {{- partial "img.html" (dict "image" . "alt" "" "lazy" true) -}}
+  </a>
+  {{- end }}
+  <h3><a href="{{ .url }}">{{ .title }}</a></h3>
+  {{- with .summary }}
+  <p>{{ . }}</p>
+  {{- end }}
+  <p class="meta">
+    {{- range .meta }}<span>{{ . }}</span>{{ end }}
+    {{- with .source }}<a href="{{ . }}">Source</a>{{ end }}
+  </p>
+</article>

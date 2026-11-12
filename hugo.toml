@@ -9,6 +9,12 @@ capitalizeListTitles = false
   description = "Projects and notes by Henning Gründl"
   author = "Henning Gründl"
 
+  # Contact links in the footer; leave a value empty to hide it
+  [params.contact]
+    email = ""
+    linkedin = ""
+    mastodon = ""
+
   [params.github]
     user = "iam-peter"
     # Forks are hidden unless listed under include
