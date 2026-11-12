@@ -33,9 +33,5 @@
   {{- end }}
 </div>
 
-{{- $masonry := resources.Get "js/vendor/masonry.pkgd.min.js" }}
-{{- $init := resources.Get "js/mosaic.js" | minify }}
-{{- with slice $masonry $init | resources.Concat "js/home.js" | fingerprint }}
-<script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" defer></script>
-{{- end }}
+{{ partial "mosaic-script.html" . }}
 {{ end }}

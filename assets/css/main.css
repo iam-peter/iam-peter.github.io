@@ -94,25 +94,12 @@ main { padding: 1rem 0 3rem; }
 
 .meta { color: var(--muted); font-size: .875rem; }
 
-/* Projects */
-.cards {
-  display: grid;
-  /* At most 3 columns, then 2 and 1 on narrower screens */
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  padding: 0;
-  list-style: none;
-}
-@media (max-width: 56rem) { .cards { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 34rem) { .cards { grid-template-columns: 1fr; } }
-.card {
-  padding: 1rem 1.1rem;
-  background: var(--card);
-  border: 1px solid var(--border);
-}
+/* Project cards, laid out by Masonry like the home page (see .mosaic) */
 .card h3 { margin: 0 0 .4rem; font-size: 1.05rem; word-break: break-word; }
 .card p { margin: .4rem 0; }
 .card .meta { display: flex; flex-wrap: wrap; gap: .25rem .9rem; }
+.card-body { padding: .9rem 1.1rem 1rem; }
+.cover img { display: block; width: 100%; height: auto; border-bottom: 1px solid var(--border); }
 
 /* Notes */
 .note-list { padding: 0; list-style: none; }
@@ -185,19 +172,7 @@ article li + li { margin-top: .25rem; }
 .mosaic:not(.is-masonry) :is(.mosaic-sizer, .mosaic-gutter) { display: none; }
 .mosaic:not(.is-masonry) .tile { margin-bottom: 0; }
 
-/* Project cards and pages */
-.project-card { padding: 0 0 .5rem; overflow: hidden; }
-.project-card > :not(.cover) { margin-left: 1.1rem; margin-right: 1.1rem; }
-.project-card h3 { margin-top: .9rem; }
-.cover img {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 8 / 5;
-  object-fit: cover;
-  border-bottom: 1px solid var(--border);
-}
-
+/* Project pages */
 .toc { display: flex; gap: 1.25rem; margin: 1rem 0; }
 
 dl, .facts {

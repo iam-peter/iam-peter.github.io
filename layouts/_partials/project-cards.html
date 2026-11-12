@@ -1,21 +1,25 @@
-<ul class="cards">
+{{- /* Project pages as cards in a Masonry layout, images at their own shape */ -}}
+<div class="mosaic">
+  <div class="mosaic-sizer"></div>
+  <div class="mosaic-gutter"></div>
   {{- range $page := . }}
-  <li class="card project-card">
+  <article class="tile card">
     {{- range first 1 (partial "project-images.html" .) }}
-    {{- $anchor := cond (eq $page.Params.category "web") "Top" "Center" }}
-    {{- $thumb := .image.Fill (printf "640x400 webp %s" $anchor) }}
+    {{- $thumb := .image.Process "fit 640x1280 webp" }}
     <a class="cover" href="{{ $page.RelPermalink }}" tabindex="-1">
       <img src="{{ $thumb.RelPermalink }}" width="{{ $thumb.Width }}" height="{{ $thumb.Height }}" alt="" loading="lazy">
     </a>
     {{- end }}
-    <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
-    {{- with .Params.summary }}
-    <p>{{ . }}</p>
-    {{- end }}
-    <p class="meta">
-      {{- with .Params.period }}<span>{{ . }}</span>{{ end }}
-      {{- range .Params.tools }}<span>{{ . }}</span>{{ end }}
-    </p>
-  </li>
+    <div class="card-body">
+      <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+      {{- with .Params.summary }}
+      <p>{{ . }}</p>
+      {{- end }}
+      <p class="meta">
+        {{- with .Params.period }}<span>{{ . }}</span>{{ end }}
+        {{- range .Params.tools }}<span>{{ . }}</span>{{ end }}
+      </p>
+    </div>
+  </article>
   {{- end }}
-</ul>
+</div>

@@ -1,32 +1,36 @@
+{{- /* GitHub repositories as cards in a Masonry layout */ -}}
 {{- $repos := partialCached "github-repos.html" . -}}
 {{- with .limit }}{{ $repos = first . $repos }}{{ end -}}
 {{- with $repos }}
-<ul class="cards">
+<div class="mosaic">
+  <div class="mosaic-sizer"></div>
+  <div class="mosaic-gutter"></div>
   {{- range $repo := . }}
-  {{- $screenshot := partialCached "github-screenshot.html" . .full_name .pushed_at }}
-  <li class="card{{ if $screenshot }} project-card{{ end }}">
-    {{- with $screenshot }}
-    {{- $thumb := .Fill "640x400 webp Top" }}
+  <article class="tile card">
+    {{- with partialCached "github-screenshot.html" . .full_name .pushed_at }}
+    {{- $thumb := .Process "fit 640x1280 webp" }}
     <a class="cover" href="{{ $repo.html_url }}" tabindex="-1">
       <img src="{{ $thumb.RelPermalink }}" width="{{ $thumb.Width }}" height="{{ $thumb.Height }}" alt="" loading="lazy">
     </a>
     {{- end }}
-    <h3><a href="{{ .html_url }}">{{ .name }}</a></h3>
-    {{- with .description }}
-    <p>{{ . }}</p>
-    {{- end }}
-    <p class="meta">
-      {{- with .language }}<span>{{ . }}</span>{{ end }}
-      {{- with .stargazers_count }}<span>★ {{ . }}</span>{{ end }}
-      {{- if .fork }}<span>fork</span>{{ end }}
-      <span>updated <time datetime="{{ .pushed_at }}">{{ time.Format "Jan 2006" .pushed_at }}</time></span>
-    </p>
-    {{- with .homepage }}
-    <p class="meta"><a href="{{ . }}">{{ . }}</a></p>
-    {{- end }}
-  </li>
+    <div class="card-body">
+      <h3><a href="{{ .html_url }}">{{ .name }}</a></h3>
+      {{- with .description }}
+      <p>{{ . }}</p>
+      {{- end }}
+      <p class="meta">
+        {{- with .language }}<span>{{ . }}</span>{{ end }}
+        {{- with .stargazers_count }}<span>★ {{ . }}</span>{{ end }}
+        {{- if .fork }}<span>fork</span>{{ end }}
+        <span>updated <time datetime="{{ .pushed_at }}">{{ time.Format "Jan 2006" .pushed_at }}</time></span>
+      </p>
+      {{- with .homepage }}
+      <p class="meta"><a href="{{ . }}">{{ . }}</a></p>
+      {{- end }}
+    </div>
+  </article>
   {{- end }}
-</ul>
+</div>
 {{- else }}
 <p>Projects are loaded from <a href="https://github.com/{{ site.Params.github.user }}">GitHub</a> when the site is built.</p>
 {{- end }}
