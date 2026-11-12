@@ -97,9 +97,8 @@ main { padding: 1rem 0 3rem; }
 /* Projects */
 .cards {
   display: grid;
-  /* 4, 2 or 1 columns, never 3, so the eight projects and four
-     repositories on the home page always fill whole rows */
-  grid-template-columns: repeat(4, 1fr);
+  /* At most 3 columns, then 2 and 1 on narrower screens */
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
   padding: 0;
   list-style: none;
