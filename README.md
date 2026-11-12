@@ -19,8 +19,8 @@ The projects page has three groups:
 - **University projects and theses** and **web projects** are page bundles
   in `content/projects/<name>/`, with `category: academic` or `category: web`
   in the front matter. List the images in `images`; the first one is used as
-  the cover. An entry can also be a map with `src` and `caption`. `featured: true` puts a project on the home page. Other fields
-  such as `period`, `institution`, `supervisors`, `participants`, `tools`,
+  the cover. An entry can also be a map with `src` and `caption`. Other
+  fields such as `period`, `institution`, `supervisors`, `participants`, `tools`,
   `website` and `publications` are optional.
 
 - **Open source on GitHub** is not stored in this repository. It is fetched
@@ -38,6 +38,16 @@ The projects page has three groups:
 The workflow also rebuilds the site every night so new repositories appear
 without a push. If the API is unreachable, the CI build fails and the
 previous deployment stays online.
+
+## Home page
+
+The home page is a wall of images laid out with
+[Masonry](https://masonry.desandro.com/), newest first: the cover of every
+project page and the README screenshot of every GitHub repository that has
+one. Each image links to the project page, or to the repository's homepage
+(its GitHub page if it has none). The title only shows on hover.
+Masonry 4.2.2 is vendored in `assets/js/vendor/`; without JavaScript the
+images flow in plain rows.
 
 ## Local preview
 

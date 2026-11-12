@@ -3,25 +3,39 @@
   {{ .Content }}
 </section>
 
-<section>
-  <h2>Selected projects</h2>
-  {{- /* Featured projects first, then the newest others, to fill two rows */}}
-  {{- $projects := where site.RegularPages "Section" "projects" }}
-  {{- $featured := (where $projects "Params.featured" true).ByDate.Reverse }}
-  {{- $others := (where $projects "Params.featured" "!=" true).ByDate.Reverse }}
-  {{ partial "project-cards.html" (first 8 (union $featured $others)) }}
-  <p><a href="{{ "/projects/" | relURL }}">All projects →</a></p>
-</section>
+{{- /*
+  One image per project, newest first: the cover of each project page and
+  the README screenshot of each GitHub repository. Each tile links to the
+  project page, or to a repository's homepage when it has one.
+*/}}
+{{- $items := slice }}
+{{- range $page := where site.RegularPages "Section" "projects" }}
+  {{- range first 1 (partial "project-images.html" .) }}
+    {{- $items = $items | append (dict "image" .image "title" $page.Title "url" $page.RelPermalink "date" $page.Date) }}
+  {{- end }}
+{{- end }}
+{{- range $repo := partialCached "github-repos.html" . }}
+  {{- with partialCached "github-screenshot.html" . .full_name .pushed_at }}
+    {{- $url := $repo.homepage | default $repo.html_url }}
+    {{- $items = $items | append (dict "image" . "title" $repo.name "url" $url "date" (time $repo.pushed_at)) }}
+  {{- end }}
+{{- end }}
 
-<section>
-  <h2>Recently on GitHub</h2>
-  {{ partial "project-list.html" (dict "limit" 4) }}
-  <p><a href="{{ "/projects/#github" | relURL }}">All repositories →</a></p>
-</section>
+<div class="mosaic">
+  <div class="mosaic-sizer"></div>
+  <div class="mosaic-gutter"></div>
+  {{- range $i, $item := sort $items "date" "desc" }}
+  {{- $img := .image.Process "fit 640x1280 webp" }}
+  <a class="tile" href="{{ .url }}">
+    <img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt="{{ .title }}"{{ if ge $i 6 }} loading="lazy"{{ end }}>
+    <span class="tile-title" aria-hidden="true">{{ .title }}</span>
+  </a>
+  {{- end }}
+</div>
 
-<section>
-  <h2>Latest notes</h2>
-  {{ partial "note-list.html" (first 5 (where site.RegularPages "Section" "notes")) }}
-  <p><a href="{{ "/notes/" | relURL }}">All notes →</a></p>
-</section>
+{{- $masonry := resources.Get "js/vendor/masonry.pkgd.min.js" }}
+{{- $init := resources.Get "js/mosaic.js" | minify }}
+{{- with slice $masonry $init | resources.Concat "js/home.js" | fingerprint }}
+<script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" defer></script>
+{{- end }}
 {{ end }}
