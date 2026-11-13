@@ -59,7 +59,8 @@ screens.
   sharp one. In dark mode they are dimmed slightly until hovered.
 - Headings use Space Grotesk (SIL Open Font License, in `static/fonts/`),
   hosted here rather than on a font service.
-- Every page has Open Graph tags, so shared links show the project image.
+- Every page has Open Graph tags. Shared links to a project page show its
+  first image; other pages have no preview image yet.
 - Footer contact links come from `[params.contact]` in `hugo.toml`; an empty
   value hides that link.
 
